@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FoodCity — Restaurantes & Mercado</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+ 
+<div class="topbar">
+  <div class="logo">Food<span>City</span></div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="showPage('restaurants',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg> Restaurantes</button>
+    <button class="ntab" onclick="showPage('market',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Mercado</button>
+  </div>
+  <div class="topbar-r">
+    <button class="btn-login" id="loginBtn" onclick="openReg()">Entrar / Cadastrar</button>
+    <button class="cart-btn" onclick="toggleCart()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> <span class="cbadge" id="cartCount">0</span></button>
+  </div>
+</div>
+ 
+<div class="live-bar">
+  <div class="live-dot"></div>
+  <span class="live-txt">Integrado com o painel da loja</span>
+  <span class="live-info">Cadastros e pedidos chegam em tempo real no mercado</span>
+  <a class="panel-link" href="mercado_v3.html" target="_blank"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Abrir Painel da Loja →</a>
+</div>
+ 
+<!-- RESTAURANTES -->
+<div class="page active" id="page-restaurants">
+  <div class="hero">
+    <div class="hero-deco">FOOD</div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-pill">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="12"/></svg>
+          Melhor delivery da cidade
+        </div>
+        <h1>Coma bem,<br/>peça <em>agora</em></h1>
+        <p class="hero-sub">Restaurantes próximos · Cardápio completo · Rastreamento em tempo real</p>
+        <div class="hero-stats">
+          <div class="hstat"><div class="hstat-n">200+</div><div class="hstat-l">Restaurantes</div></div>
+          <div class="hstat"><div class="hstat-n">30'</div><div class="hstat-l">Entrega média</div></div>
+          <div class="hstat"><div class="hstat-n">4.8</div><div class="hstat-l">Avaliação</div></div>
+        </div>
+        <div class="mode-wrap">
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="mD" onclick="setMode('delivery')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg> Delivery</button>
+            <button class="mode-btn" id="mP" onclick="setMode('pickup')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Retirada</button>
+          </div>
+        </div>
+      </div>
+      <div class="hero-badge">
+        <div class="hb-num">24h</div>
+        <div class="hb-lbl">Sempre aberto</div>
+      </div>
+    </div>
+  </div>
+  <div class="promo-wrap"><div class="sec-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Promoções da Semana</div><div class="promo-scroll" id="promoScroll"></div></div>
+  <div class="search-area">
+    <div class="search-row">
+      <input id="q" type="text" placeholder="Culinária, nome ou bairro…"/>
+      <button class="btn-search" onclick="buscar()">Buscar</button>
+    </div>
+  </div>
+  <div class="filters">
+    <div class="fg"><label>Tipo</label><select id="f-type"><option value="restaurant">Restaurantes</option><option value="cafe">Café</option><option value="bakery">Padaria</option><option value="bar">Bar</option></select></div>
+    <div class="fg"><label>Preço</label><select id="f-price"><option value="">Todos</option><option value="1">$ Barato</option><option value="2">$$ Médio</option><option value="3">$$$ Caro</option><option value="4">$$$$ Luxo</option></select></div>
+    <div class="fg"><label>Avaliação</label><select id="f-rating"><option value="0">Todas</option><option value="4">4+⭐</option><option value="4.5">4.5+⭐</option></select></div>
+    <div class="fg"><label>Raio</label><select id="f-radius"><option value="2000" selected>2km</option><option value="5000">5km</option><option value="10000">10km</option></select></div>
+  </div>
+  <div class="cep-bar">
+    <div class="cep-box">
+      <span class="cep-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Endereço de entrega (CEP)</span>
+      <div class="cep-form">
+        <input class="cep-input" id="cepInput" placeholder="Ex: 57300-000" maxlength="9" oninput="this.value=this.value.replace(/\D/g,'').replace(/^(\d{5})(\d)/,'$1-$2')"/>
+        <button class="btn-cep" onclick="buscarCep()">Buscar</button>
+      </div>
+      <div class="cep-result" id="cepResult">Digite seu CEP.</div>
+    </div>
+  </div>
+  <div class="sbar" id="sbar"><div class="sdot" id="sdot"></div><span id="stxt"></span></div>
+  <div class="content-layout">
+    <div>
+      <div class="sec-label" id="resLabel">Restaurantes</div>
+      <div class="grid" id="results"><div class="loading-wrap"><div class="spinner"></div><p>Obtendo localização…</p></div></div>
+    </div>
+    <div class="map-col">
+      <div class="sec-label">Mapa</div>
+      <div id="map-ph"><div><div style="opacity:.3;margin-bottom:.38rem"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></div><p>Clique em um restaurante</p></div></div>
+      <div id="map"></div>
+      <div class="route-box" id="routeBox"><div class="route-title"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg> Rota do Delivery</div><div id="routeRows"></div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- MERCADO -->
+<div class="page" id="page-market">
+  <div class="market-top">
+    <div class="market-inner">
+      <div class="hero-pill" style="color:var(--jade3);border-color:rgba(34,134,111,.35);background:rgba(34,134,111,.08);margin-bottom:1.2rem;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Compras online</div>
+      <h1>Mercado<br/><em>FreshMart</em></h1>
+      <p>Produtos frescos entregues na sua porta</p>
+      <div class="mode-wrap" style="margin-top:1.5rem;">
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="mD2" onclick="setMode('delivery')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg> Delivery</button>
+          <button class="mode-btn" id="mP2" onclick="setMode('pickup')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Retirada</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cat-pills" id="catPills"></div>
+  <div class="market-grid" id="marketGrid"></div>
+</div>
+ 
+<!-- CART -->
+<div class="cart-ov" id="cartOv" onclick="if(event.target===this)toggleCart()">
+  <div class="cart-panel">
+    <div class="cart-hdr"><div class="cart-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Carrinho</div><button class="bx" onclick="toggleCart()">✕</button></div>
+    <div class="cart-body" id="cartBody"><div class="cart-empty">Carrinho vazio</div></div>
+    <div class="cart-ftr">
+      <div class="ctrow"><span class="ctlbl">Total</span><span class="ctval" id="cartTotal">R$ 0,00</span></div>
+      <div class="plbl">Pagamento</div>
+      <div class="popts">
+        <button class="popt sel" data-pay="Pix" onclick="selPay(this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Pix</button>
+        <button class="popt" data-pay="Cartão" onclick="selPay(this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Cartão</button>
+        <button class="popt" data-pay="Dinheiro" onclick="selPay(this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> Dinheiro</button>
+      </div>
+      <button class="btn-co" onclick="checkout()">Fazer Pedido →</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- TRACKER -->
+<div class="ov-track" id="ovTrack">
+  <div class="track-panel">
+    <div class="track-hdr"><div class="track-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Rastreamento</div><button class="bx" onclick="closeTrack()">✕</button></div>
+    <div class="track-body">
+      <div class="mode-banner"><span id="tmIcon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg></span><span id="tmText">Delivery em andamento</span></div>
+      <div class="sync-row"><div class="sp"></div><div><strong>Sincronizado com o painel da loja</strong> — pedido recebido!</div></div>
+      <div class="timer-wrap">
+        <div class="tring">
+          <svg viewBox="0 0 102 102"><circle class="bgc" cx="51" cy="51" r="45"/><circle class="pgc" id="pgc" cx="51" cy="51" r="45" stroke-dasharray="282.7" stroke-dashoffset="0"/></svg>
+          <div class="tnum" id="tnum">--</div>
+        </div>
+        <div class="tlbl" id="tlbl">aguardando…</div>
+      </div>
+      <div class="steps" id="orderSteps"></div>
+      <div class="ready-box" id="readyBox"><h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:4px;color:var(--green)"><polyline points="20 6 9 17 4 12"/></svg> Pronto!</h3><p id="readyMsg"></p></div>
+      <div class="pc" id="pcBox" style="display:none"><span>Pagamento</span><strong id="pmText">—</strong></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- MENU -->
+<div class="ov-menu" id="ovMenu" onclick="if(event.target===this)closeMenu()">
+  <div class="menu-box">
+    <div class="menu-hdr">
+      <img class="mhimg" id="mhImg" src="" alt=""/>
+      <div><div class="mhname" id="mhName">Cardápio</div><div class="mhsub" id="mhSub"></div></div>
+      <button class="bx" style="margin-left:auto" onclick="closeMenu()">✕</button>
+    </div>
+    <div class="menu-content" id="menuContent"></div>
+  </div>
+</div>
+ 
+<!-- CADASTRO -->
+<div class="ov-reg" id="ovReg" onclick="if(event.target===this)closeReg()">
+  <div class="reg-box">
+    <button class="brc" onclick="closeReg()">✕</button>
+    <div class="reg-hdr">
+      <h2 id="regTitle">Criar Conta</h2>
+      <p id="regSub">Cadastre-se para fazer pedidos</p>
+      <div class="reg-sync"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg> Seus dados chegam em tempo real no painel da loja</div>
+    </div>
+    <div class="reg-bd" id="regBd"></div>
+  </div>
+</div>
+ 
+<div class="toast-wrap" id="toastWrap"></div>
+<footer>FoodCity © 2025 · <a href="mercado_v3.html" target="_blank">Painel da Loja</a></footer>
+ 
+<script src="data.js"></script>
+<script src="bridge.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
