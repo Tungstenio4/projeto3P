@@ -18,6 +18,7 @@ function advOrder(id) {
     o.status = 'ready';
     dbSaveOrder(o);
     renderAll();
+    if (alertPrefs.sndReady) playChime();
     showToast('Pedido ' + id + ' pronto!', 'order');
   } else if (o.status === 'ready') {
     o.status = 'done'; revenue += (o.total || 0); doneCnt++;

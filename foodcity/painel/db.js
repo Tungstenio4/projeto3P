@@ -141,10 +141,16 @@ async function dbRestorePainel() {
   const done = await dbGet('settings', 'doneCnt');
   const cli  = await dbGet('settings', 'newCliCnt');
   const ev   = await dbGet('settings', 'evCount');
+  const prefs = await dbGet('settings', 'alertPrefs');
   if (rev)  revenue    = rev.value  || 0;
   if (done) doneCnt    = done.value || 0;
   if (cli)  newCliCnt  = cli.value  || 0;
   if (ev)   evCount    = ev.value   || 0;
+  if (prefs?.value && typeof prefs.value === 'object') {
+    Object.assign(alertPrefs, prefs.value);
+    console.log('[IDB] alertPrefs restaurados:', alertPrefs);
+  }
+  updateAlertsBtnState();
  
   // Estoque
   const savedStock = await dbGetAll('stock');

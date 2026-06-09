@@ -6,7 +6,17 @@
    ESTADO
 ══════════════════════════════════════════════ */
 let orders = [], clients = {}, revenue = 0, doneCnt = 0,
-    newCliCnt = 0, soundOn = true, storeOpen = true, filterType = 'all';
+    newCliCnt = 0, storeOpen = true, filterType = 'all';
+
+// ── Preferências granulares de alerta ──
+// Cada chave controla independentemente som e notificação visual por tipo de evento.
+let alertPrefs = {
+  sndOrder:  true,   // beep ao receber novo pedido
+  sndClient: true,   // chime ao cadastrar novo cliente
+  sndReady:  true,   // som ao pedido ficar pronto
+  visOrder:  true,   // notificação lateral para novos pedidos
+  visClient: true,   // notificação lateral para novos clientes
+};
 const seen = new Set();
 let evCount = 0;
  
