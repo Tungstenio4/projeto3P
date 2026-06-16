@@ -1,0 +1,21 @@
+# ── FoodCity — Netlify config ──
+# Site 100% estático: sem build step, sem bundler.
+# Sobe a pasta raiz do projeto diretamente.
+
+[build]
+  publish = "."   # raiz do repositório = pasta deployada
+
+# ── Headers de segurança + permissões necessárias ──
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Permite IndexedDB, BroadcastChannel e AudioContext
+    Permissions-Policy = "interest-cohort=()"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# ── Sem redirects: as duas páginas são arquivos estáticos normais ──
+# cliente/ → cliente/index.html
+# painel/  → painel/index.html
+# Netlify serve arquivos estáticos automaticamente.
