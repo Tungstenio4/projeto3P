@@ -9,6 +9,33 @@ function renderAll() {
   renderKPIs(); renderBoards(); renderCliTable(); renderHistory();
   updateBadges(); updateSidebar(); checkStockAlerts();
 }
+
+/* ── Ticker: atualiza countdowns a cada segundo sem re-renderizar os cards ── */
+setInterval(() => {
+  document.querySelectorAll('.cd-wrap[data-oid]').forEach(el => {
+    const oid = el.dataset.oid;
+    const o = orders.find(x => x.id === oid);
+    if (!o || !o.prepMins || !o.prepStart) return;
+    const elapsed   = Math.floor((Date.now() - o.prepStart) / 1000);
+    const totalSecs = o.prepMins * 60;
+    const remaining = Math.max(totalSecs - elapsed, 0);
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    const pct = Math.min((elapsed / totalSecs) * 100, 100);
+    const isLate = remaining === 0;
+    const isWarn = !isLate && pct >= 75;
+    const cls = isLate ? 'cdlate' : isWarn ? 'cdwarn' : 'cdok';
+    const label = isLate ? '⚠ Atrasado!' : m + ':' + String(s).padStart(2, '0');
+
+    // Atualiza classes
+    el.className = 'cd-wrap ' + cls;
+    const bar = el.querySelector('.cd-bar-fg');
+    if (bar) { bar.style.width = pct.toFixed(1) + '%'; bar.className = 'cd-bar-fg ' + cls; }
+    const lbl = el.querySelector('.cd-lbl');
+    if (lbl) lbl.textContent = '⏱ ' + (isLate ? 'Tempo esgotado' : 'Restante');
+    const val = el.querySelector('.cd-val');
+    if (val) { val.textContent = label; val.className = 'cd-val ' + cls; }
+  });
+}, 1000);
 function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
 function setHTML(id, v) { const el = document.getElementById(id); if (el) el.innerHTML = v; }
  
@@ -61,6 +88,30 @@ function cardHTML(o) {
   const t  = o.time instanceof Date ? o.time : new Date(o.time);
   const sc = { prep: 'oprep', ready: 'oready', done: 'odone' }[o.status] || 'onew';
   const it = o.items || [];
+
+  // ── Countdown para pedidos em preparo ──
+  let countdownHTML = '';
+  if (o.status === 'prep' && o.prepMins && o.prepStart) {
+    const elapsed   = Math.floor((Date.now() - o.prepStart) / 1000);
+    const totalSecs = o.prepMins * 60;
+    const remaining = Math.max(totalSecs - elapsed, 0);
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    const pct = Math.min((elapsed / totalSecs) * 100, 100);
+    const isLate = remaining === 0;
+    const isWarn = !isLate && pct >= 75;
+    const cls = isLate ? 'cdlate' : isWarn ? 'cdwarn' : 'cdok';
+    const label = isLate
+      ? '⚠ Atrasado!'
+      : m + ':' + String(s).padStart(2, '0');
+    countdownHTML =
+      '<div class="cd-wrap ' + cls + '" data-oid="' + o.id + '">'
+      + '<div class="cd-bar-bg"><div class="cd-bar-fg ' + cls + '" style="width:' + pct.toFixed(1) + '%"></div></div>'
+      + '<div class="cd-row">'
+      + '<span class="cd-lbl">⏱ ' + (isLate ? 'Tempo esgotado' : 'Restante') + '</span>'
+      + '<span class="cd-val ' + cls + '">' + label + '</span>'
+      + '</div></div>';
+  }
+
   let acts = '';
   if (o.status === 'new')
     acts = '<button class="ob acc" data-act="accept" data-id="' + o.id + '">Aceitar</button>'
@@ -74,7 +125,7 @@ function cardHTML(o) {
          + '<button class="ob prt" data-act="print" data-id="' + o.id + '">Imprimir</button>';
   else
     acts = '<button class="ob prt" data-act="print" data-id="' + o.id + '">Imprimir</button>';
- 
+
   return (
     '<div class="oc ' + sc + (o.isNewClient ? ' nc' : '') + '">'
     + '<div class="ot"><span class="oid">' + o.id + '</span>'
@@ -90,7 +141,9 @@ function cardHTML(o) {
         + '<span class="oip">R$ ' + (i.price || 0).toFixed(2).replace('.', ',') + '</span></div>'
       ).join('')
     + (it.length > 3 ? '<div style="font-size:.58rem;color:var(--muted);padding-top:.1rem">+' + (it.length - 3) + ' item(s)…</div>' : '')
-    + '</div><div class="ofooter">'
+    + '</div>'
+    + countdownHTML
+    + '<div class="ofooter">'
     + '<span class="ototal">R$ ' + (o.total || 0).toFixed(2).replace('.', ',') + '</span>'
     + '<span class="opay ' + pc + '">' + (o.pay || '—') + '</span></div>'
     + '<div class="oacts">' + acts + '</div></div>'
