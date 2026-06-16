@@ -1,0 +1,290 @@
+/* ══════════════════════════════════════════════════════════════
+   FoodCity — print.css
+   Media query de impressão para comandas térmicas (58mm / 80mm)
+   e papel A4. Link com media="print" no index.html do painel.
+   Não afeta o estilo em tela.
+══════════════════════════════════════════════════════════════ */
+
+@media print {
+
+  /* ── Reset geral ── */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Oculta tudo exceto a janela de comanda */
+  body > *:not(#fc-print-window) {
+    display: none !important;
+  }
+
+  /* ── Janela de impressão ── */
+  #fc-print-window {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #fff;
+  }
+
+  /* ── Comanda principal ── */
+  .fc-receipt {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 9pt;
+    color: #000;
+    background: #fff;
+    width: 100%;
+    padding: 4mm 3mm;
+    page-break-after: avoid;
+  }
+
+  /* ── Tamanho 58mm ── */
+  .fc-receipt.w58 {
+    width: 52mm;
+    font-size: 8pt;
+    padding: 3mm 2mm;
+  }
+
+  /* ── Tamanho 80mm ── */
+  .fc-receipt.w80 {
+    width: 74mm;
+    font-size: 9pt;
+    padding: 4mm 3mm;
+  }
+
+  /* ── Tamanho A4 ── */
+  .fc-receipt.wA4 {
+    width: 190mm;
+    font-size: 10pt;
+    padding: 10mm 15mm;
+  }
+
+  /* ── Cabeçalho ── */
+  .rc-header {
+    text-align: center;
+    margin-bottom: 3mm;
+  }
+
+  .rc-logo {
+    font-size: 14pt;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  .rc-logo span {
+    font-size: 10pt;
+    font-weight: 400;
+    display: block;
+    letter-spacing: .02em;
+  }
+
+  .rc-store-name {
+    font-size: 11pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-top: 1mm;
+  }
+
+  .rc-store-addr,
+  .rc-store-phone {
+    font-size: 7.5pt;
+    line-height: 1.4;
+    color: #333;
+  }
+
+  /* ── Separadores ── */
+  .rc-sep {
+    border: none;
+    border-top: 1px dashed #000;
+    margin: 2mm 0;
+  }
+
+  .rc-sep-solid {
+    border: none;
+    border-top: 1px solid #000;
+    margin: 2mm 0;
+  }
+
+  /* ── Metadados do pedido ── */
+  .rc-meta {
+    margin-bottom: 1mm;
+  }
+
+  .rc-order-id {
+    font-size: 13pt;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: .06em;
+    margin-bottom: 1mm;
+  }
+
+  .rc-meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 7.5pt;
+    line-height: 1.5;
+  }
+
+  .rc-meta-row .label {
+    color: #555;
+  }
+
+  .rc-meta-row .value {
+    font-weight: 600;
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+  }
+
+  /* ── Badge de tipo (Delivery / Retirada / Mercado) ── */
+  .rc-type-badge {
+    display: inline-block;
+    border: 1.5px solid #000;
+    border-radius: 2px;
+    padding: 0 2mm;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin: 1mm auto;
+  }
+
+  .rc-type-center {
+    text-align: center;
+  }
+
+  /* ── Seção de itens ── */
+  .rc-items-title {
+    font-size: 7pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #555;
+    margin-bottom: 1mm;
+  }
+
+  .rc-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    line-height: 1.6;
+    font-size: 8.5pt;
+  }
+
+  .rc-item-row .item-qty {
+    min-width: 5mm;
+    font-weight: 700;
+  }
+
+  .rc-item-row .item-name {
+    flex: 1;
+    padding: 0 1.5mm;
+    word-break: break-word;
+  }
+
+  .rc-item-row .item-price {
+    text-align: right;
+    white-space: nowrap;
+    font-size: 8pt;
+    color: #333;
+  }
+
+  /* ── Entrega ── */
+  .rc-delivery-addr {
+    font-size: 8pt;
+    line-height: 1.5;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 1.5mm 2mm;
+    border-radius: 1px;
+    margin: 1mm 0;
+    word-break: break-word;
+  }
+
+  /* ── Totais ── */
+  .rc-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    line-height: 1.6;
+  }
+
+  .rc-grand-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12pt;
+    font-weight: 700;
+    margin-top: 1mm;
+    padding-top: 1mm;
+    border-top: 1.5px solid #000;
+  }
+
+  /* ── Pagamento ── */
+  .rc-pay-section {
+    margin-top: 1.5mm;
+  }
+
+  .rc-pay-method {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    line-height: 1.5;
+  }
+
+  /* ── Observações ── */
+  .rc-obs {
+    font-size: 8pt;
+    border: 1px dashed #555;
+    padding: 1.5mm 2mm;
+    margin: 1.5mm 0;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+
+  /* ── Badge novo cliente ── */
+  .rc-new-client-badge {
+    text-align: center;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    border: 1.5px solid #000;
+    padding: 0.5mm 2mm;
+    margin: 1mm 0;
+  }
+
+  /* ── Rodapé ── */
+  .rc-footer {
+    text-align: center;
+    margin-top: 3mm;
+  }
+
+  .rc-footer-msg {
+    font-size: 8pt;
+    line-height: 1.5;
+    color: #333;
+  }
+
+  .rc-footer-timestamp {
+    font-size: 6.5pt;
+    color: #777;
+    margin-top: 1mm;
+  }
+
+  /* ── Espaço de corte no papel contínuo ── */
+  .rc-cut-mark {
+    text-align: center;
+    font-size: 7pt;
+    color: #aaa;
+    letter-spacing: .2em;
+    margin-top: 4mm;
+  }
+
+}
+/* fim @media print */
