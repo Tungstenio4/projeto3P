@@ -123,6 +123,183 @@ function playChime() {
   } catch(e) {}
 }
 /* ══════════════════════════════════════════════
+   CONFIGURAÇÕES DA LOJA — impressão térmica
+   Persistidas via dbSaveSetting (IndexedDB)
+══════════════════════════════════════════════ */
+
+let storeConfig = {
+  name:       'FoodCity',
+  address:    '',
+  phone:      '',
+  footer:     'Obrigado pela preferência! Volte sempre. 🍔',
+  paperWidth: '80'   // '58' | '80' | 'A4'
+};
+
+async function initStoreConfig() {
+  const saved = await dbGet('settings', 'storeConfig');
+  if (saved?.value) {
+    try { Object.assign(storeConfig, JSON.parse(saved.value)); } catch(e) {}
+  }
+}
+
+async function saveStoreConfig() {
+  await dbSaveSetting('storeConfig', JSON.stringify(storeConfig));
+}
+
+/* ── Modal de configurações da loja ── */
+function openStoreConfig() {
+  document.getElementById('fc-config-modal')?.remove();
+
+  const m = document.createElement('div');
+  m.id = 'fc-config-modal';
+  m.style.cssText = 'position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.72)';
+
+  const widths = [
+    { v: '58', l: '58 mm — Térmica estreita' },
+    { v: '80', l: '80 mm — Térmica padrão'  },
+    { v: 'A4', l: 'A4 — Impressora comum'   }
+  ];
+
+  const cfgInput = (id, val, placeholder) =>
+    '<input id="' + id + '" type="text" value="' + escHtml(val) + '" placeholder="' + placeholder + '" style="display:block;width:100%;margin-top:.35rem;background:var(--bg2,#0f0903);border:1px solid var(--border,#3a2a23);border-radius:.3rem;color:var(--cream,#f5ede0);padding:.4rem .65rem;font-family:Barlow,sans-serif;font-size:.78rem;outline:none"/>';
+
+  const lbl = (text, inner) =>
+    '<label style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted,#a08060)">' + text + inner + '</label>';
+
+  m.innerHTML =
+    '<div style="background:var(--card,#1a1008);border:1px solid var(--border,#3a2a23);border-radius:.6rem;width:min(480px,94vw);padding:1.5rem;font-family:Barlow,sans-serif;color:var(--cream,#f5ede0);box-shadow:0 8px 40px rgba(0,0,0,.7)">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">'
+    + '<h3 style="font-family:\'Barlow Condensed\',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase">🖨 Configurações de Impressão</h3>'
+    + '<button onclick="document.getElementById(\'fc-config-modal\').remove()" style="background:none;border:none;color:var(--muted,#a08060);font-size:1.3rem;cursor:pointer">✕</button>'
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:.8rem">'
+    + lbl('Nome da Loja', cfgInput('cfg-name', storeConfig.name, 'Ex: FoodCity — Centro'))
+    + lbl('Endereço', cfgInput('cfg-address', storeConfig.address, 'Ex: Av. das Américas, 100 — Recife, PE'))
+    + lbl('Telefone / WhatsApp', cfgInput('cfg-phone', storeConfig.phone, 'Ex: (81) 99999-9999'))
+    + lbl('Mensagem de Rodapé', cfgInput('cfg-footer', storeConfig.footer, 'Ex: Obrigado pela preferência!'))
+    + '<label style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted,#a08060)">Largura do Papel'
+    + '<div style="display:flex;gap:.5rem;margin-top:.35rem;flex-wrap:wrap">'
+    + widths.map(w =>
+        '<label id="cfg-paper-lbl-' + w.v + '" style="display:flex;align-items:center;gap:.35rem;cursor:pointer;font-size:.72rem;text-transform:none;background:var(--bg2,#0f0903);border:1px solid ' + (storeConfig.paperWidth === w.v ? 'var(--yellow,#F5C000)' : 'var(--border,#3a2a23)') + ';border-radius:.3rem;padding:.35rem .65rem;color:' + (storeConfig.paperWidth === w.v ? 'var(--yellow,#F5C000)' : 'var(--cream,#f5ede0)') + ';font-weight:' + (storeConfig.paperWidth === w.v ? '700' : '400') + '">'
+        + '<input type="radio" name="cfg-paper" value="' + w.v + '" ' + (storeConfig.paperWidth === w.v ? 'checked' : '') + ' style="accent-color:var(--yellow,#F5C000)" onchange="updatePaperLabels()"/>'
+        + w.l + '</label>'
+      ).join('')
+    + '</div></label>'
+    + '</div>'
+    + '<div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.4rem">'
+    + '<button onclick="document.getElementById(\'fc-config-modal\').remove()" style="background:none;border:1px solid var(--border,#3a2a23);color:var(--muted,#a08060);padding:.4rem .9rem;border-radius:.35rem;cursor:pointer;font-family:\'Barlow Condensed\',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Cancelar</button>'
+    + '<button onclick="applyStoreConfig()" style="background:var(--yellow,#F5C000);border:none;color:#1a1008;padding:.4rem 1rem;border-radius:.35rem;cursor:pointer;font-family:\'Barlow Condensed\',sans-serif;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em">Salvar</button>'
+    + '</div></div>';
+
+  document.body.appendChild(m);
+  m.addEventListener('click', e => { if (e.target === m) m.remove(); });
+  document.getElementById('cfg-name')?.focus();
+}
+
+function updatePaperLabels() {
+  const sel = document.querySelector('input[name="cfg-paper"]:checked')?.value;
+  ['58','80','A4'].forEach(v => {
+    const lbl = document.getElementById('cfg-paper-lbl-' + v);
+    if (!lbl) return;
+    const on = v === sel;
+    lbl.style.borderColor = on ? 'var(--yellow,#F5C000)' : 'var(--border,#3a2a23)';
+    lbl.style.color        = on ? 'var(--yellow,#F5C000)' : 'var(--cream,#f5ede0)';
+    lbl.style.fontWeight   = on ? '700' : '400';
+  });
+}
+
+async function applyStoreConfig() {
+  storeConfig.name       = document.getElementById('cfg-name')?.value.trim()    || storeConfig.name;
+  storeConfig.address    = document.getElementById('cfg-address')?.value.trim() || '';
+  storeConfig.phone      = document.getElementById('cfg-phone')?.value.trim()   || '';
+  storeConfig.footer     = document.getElementById('cfg-footer')?.value.trim()  || '';
+  storeConfig.paperWidth = document.querySelector('input[name="cfg-paper"]:checked')?.value || '80';
+  await saveStoreConfig();
+  document.getElementById('fc-config-modal')?.remove();
+  showToast('Configurações salvas!', 'order');
+}
+
+/* ── Escape HTML ── */
+function escHtml(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Formata BRL ── */
+function fmtBrl(n) {
+  return 'R$ ' + (Number(n) || 0).toFixed(2).replace('.', ',');
+}
+
+/* ── Monta HTML da comanda (usado por printOrder em kanban.js) ── */
+function buildReceiptHTML(o) {
+  const t          = o.time instanceof Date ? o.time : new Date(o.time || Date.now());
+  const items      = o.items || [];
+  const typeLabel  = { delivery: 'Delivery', pickup: 'Retirada', market: 'Mercado' }[o.type] || o.type || '—';
+  const wClass     = { '58': 'w58', '80': 'w80', 'A4': 'wA4' }[storeConfig.paperWidth] || 'w80';
+  const addr       = o.type !== 'pickup' ? (o.client?.addr || o.client?.address || '') : '';
+
+  const deliverySec = addr
+    ? '<div class="rc-delivery-addr"><strong>Entregar em:</strong><br/>' + escHtml(addr) + '</div>'
+    : '';
+
+  const newClientBadge = o.isNewClient
+    ? '<div class="rc-new-client-badge">★ Primeiro Pedido do Cliente ★</div>'
+    : '';
+
+  const itemRows = items.map(i =>
+    '<div class="rc-item-row">'
+    + '<span class="item-qty">' + (i.qty || 1) + '×</span>'
+    + '<span class="item-name">' + escHtml(i.name) + '</span>'
+    + '<span class="item-price">' + fmtBrl((i.price || 0) * (i.qty || 1)) + '</span>'
+    + '</div>'
+  ).join('');
+
+  const subtotal = items.reduce((s, i) => s + (Number(i.price) || 0) * (i.qty || 1), 0);
+  const frete    = (o.total || 0) - subtotal;
+  const freteRow = frete > 0.01
+    ? '<div class="rc-total-row"><span>Taxa de entrega</span><span>' + fmtBrl(frete) + '</span></div>'
+    : '';
+
+  const storeName  = storeConfig.name    ? '<div class="rc-store-name">'  + escHtml(storeConfig.name)    + '</div>' : '';
+  const storeAddr  = storeConfig.address ? '<div class="rc-store-addr">'  + escHtml(storeConfig.address) + '</div>' : '';
+  const storePhone = storeConfig.phone   ? '<div class="rc-store-phone">' + escHtml(storeConfig.phone)   + '</div>' : '';
+  const footerMsg  = storeConfig.footer  ? '<div class="rc-footer-msg">'  + escHtml(storeConfig.footer)  + '</div>' : '';
+
+  const phoneRow = o.client?.phone
+    ? '<div class="rc-meta-row"><span class="label">Telefone</span><span class="value">' + escHtml(o.client.phone) + '</span></div>'
+    : '';
+
+  return (
+    '<div class="fc-receipt ' + wClass + '">'
+    + '<div class="rc-header">'
+    +   '<div class="rc-logo">Food<span>City</span></div>'
+    +   storeName + storeAddr + storePhone
+    + '</div>'
+    + '<hr class="rc-sep-solid"/>'
+    + '<div class="rc-order-id">' + escHtml(o.id) + '</div>'
+    + '<div class="rc-type-center"><span class="rc-type-badge">' + escHtml(typeLabel) + '</span></div>'
+    + newClientBadge
+    + '<hr class="rc-sep"/>'
+    + '<div class="rc-meta">'
+    +   '<div class="rc-meta-row"><span class="label">Cliente</span><span class="value">' + escHtml(o.client?.name || '—') + '</span></div>'
+    +   phoneRow
+    +   '<div class="rc-meta-row"><span class="label">Horário</span><span class="value">' + t.toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) + '</span></div>'
+    + '</div>'
+    + deliverySec
+    + '<hr class="rc-sep"/>'
+    + '<div class="rc-items-title">Itens do Pedido</div>'
+    + itemRows
+    + '<hr class="rc-sep"/>'
+    + freteRow
+    + '<div class="rc-grand-total"><span>TOTAL</span><span>' + fmtBrl(o.total) + '</span></div>'
+    + '<div class="rc-pay-section"><div class="rc-pay-method"><span>Pagamento</span><span>' + escHtml(o.pay || '—') + '</span></div></div>'
+    + '<hr class="rc-sep"/>'
+    + '<div class="rc-footer">' + footerMsg + '<div class="rc-footer-timestamp">' + t.toLocaleString('pt-BR') + '</div></div>'
+    + '<div class="rc-cut-mark">- - - - - - - - - - - -</div>'
+    + '</div>'
+  );
+}
+
+/* ══════════════════════════════════════════════
    PAINEL DE ALERTAS GRANULAR
 ══════════════════════════════════════════════ */
 

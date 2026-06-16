@@ -9,13 +9,29 @@ document.addEventListener('DOMContentLoaded', function() {
  
   // Relogio
   setInterval(() => { setText('clock', new Date().toLocaleTimeString('pt-BR')); }, 1000);
- 
+
+  // Carrega configurações da loja (nome, endereço, papel) do IndexedDB
+  initStoreConfig().then(() => console.log('[FC] storeConfig carregado:', storeConfig));
+
+  // Injeta botão 🖨 Config na topbar (antes do botão Alertas)
+  (function injectConfigBtn() {
+    const r = document.querySelector('.topbar-r');
+    if (!r || document.getElementById('cfgBtn')) return;
+    const btn = document.createElement('button');
+    btn.className = 'tbtn'; btn.id = 'cfgBtn';
+    btn.title = 'Configurações de impressão (papel, nome da loja, rodapé)';
+    btn.textContent = '\uD83D\uDDA8 Config';
+    btn.onclick = openStoreConfig;
+    r.insertBefore(btn, r.firstChild);
+  })();
+
   // Teclas de atalho
   document.addEventListener('keydown', e => {
     if (e.target.matches('input')) return;
     const m = {'1':'nav-pedidos','2':'nav-clientes','3':'nav-historico','4':'nav-relatorios','5':'nav-estoque'};
     if (m[e.key]) document.getElementById(m[e.key])?.click();
     if (e.key === 'n') simulateOrder();
+    if (e.key === ',') openStoreConfig();
   });
  
   // Delegacao de eventos
