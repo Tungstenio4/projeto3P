@@ -7,10 +7,76 @@
 ══════════════════════════════════════════════ */
 function acceptOrder(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
+  showPrepTimeModal(id);
+}
+
+/* ── Modal de tempo de preparo ── */
+function showPrepTimeModal(id) {
+  // Remove modal anterior se existir
+  const old = document.getElementById('prepModal'); if (old) old.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'prepModal';
+  modal.innerHTML = `
+    <div class="prep-backdrop" onclick="closePrepModal()"></div>
+    <div class="prep-modal">
+      <div class="prep-modal-title">⏱ Tempo de Preparo</div>
+      <div class="prep-modal-sub">Pedido <strong>${id}</strong> — Quanto tempo levará?</div>
+      <div class="prep-presets">
+        <button class="prep-preset" onclick="selectPrepTime(15)">15 min</button>
+        <button class="prep-preset" onclick="selectPrepTime(20)">20 min</button>
+        <button class="prep-preset" onclick="selectPrepTime(25)">25 min</button>
+        <button class="prep-preset" onclick="selectPrepTime(30)">30 min</button>
+        <button class="prep-preset" onclick="selectPrepTime(40)">40 min</button>
+        <button class="prep-preset" onclick="selectPrepTime(45)">45 min</button>
+        <button class="prep-preset" onclick="selectPrepTime(60)">60 min</button>
+      </div>
+      <div class="prep-custom-row">
+        <input class="prep-input" id="prepCustom" type="number" min="1" max="180" placeholder="Personalizado" />
+        <span class="prep-min-lbl">min</span>
+      </div>
+      <div class="prep-modal-actions">
+        <button class="prep-confirm" onclick="confirmPrepTime('${id}')">Aceitar Pedido</button>
+        <button class="prep-cancel" onclick="closePrepModal()">Cancelar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Focar input ao abrir
+  setTimeout(() => document.getElementById('prepCustom')?.focus(), 50);
+
+  // Enter confirma
+  modal.querySelector('#prepCustom').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmPrepTime(id);
+  });
+}
+
+function selectPrepTime(mins) {
+  const inp = document.getElementById('prepCustom');
+  if (inp) { inp.value = mins; }
+  // Destaca o preset selecionado
+  document.querySelectorAll('.prep-preset').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.textContent) === mins);
+  });
+}
+
+function confirmPrepTime(id) {
+  const inp = document.getElementById('prepCustom');
+  const mins = parseInt(inp?.value) || 25;
+  closePrepModal();
+
+  const o = orders.find(x => x.id === id); if (!o) return;
   o.status = 'prep';
+  o.prepMins = mins;
+  o.prepStart = Date.now();
   dbSaveOrder(o);
   renderAll();
-  showToast('Pedido ' + id + ' aceito!', 'order');
+  showToast('Pedido ' + id + ' aceito! Preparo: ' + mins + ' min', 'order');
+}
+
+function closePrepModal() {
+  const m = document.getElementById('prepModal'); if (m) m.remove();
 }
 function advOrder(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
